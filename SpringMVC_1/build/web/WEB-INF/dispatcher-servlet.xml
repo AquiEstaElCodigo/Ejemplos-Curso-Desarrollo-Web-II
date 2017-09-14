@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!-- was: <?xml version="1.0" encoding="UTF-8"?> -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    
+    <!-- ***
+    
+        Spring trabaja con un servlet general, que es este (Servlet preparado
+        para canalizar las peticiones).
+    
+        Dispatcher-servlet.xml aqui se le informa al framework de los 
+        recursos de navegacion, siendo estos páginas. cada página creada
+        se debe informar aqui.
+    -->
+    
+      <!-- ***
+        a traves de los beans llamamos diferentes recursos, y en este caso 
+        llamamos al ...org.springframework.web.servlet.mvc.support.
+        ControllerClassNameHandlerMapping.
+        este hace que pasen por aqui todas las peticiones a realizar a
+        traves de la URL
+    -->
+    <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/>
+
+    <!--
+    Most controllers will use the ControllerClassNameHandlerMapping above, but
+    for the index controller we are using ParameterizableViewController, so we must
+    define an explicit mapping for it.
+    -->
+    
+    
+     <!-- ***
+        este bean esta creado para que el framework entienda lo siguiente.
+        en props vamos añadiendo todas las páginas que vamos añadiendo
+    -->
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <!-- En key va el nombre de la peticion que se 
+                    realizará a traves del navegador
+                -->
+                <prop key="index.htm">indexController</prop>
+                <!-- añadiendo la vista del nnuevo controlador -->
+                <prop key="home.htm">homeController</prop>
+                <prop key="nosotros.htm">homeController</prop>
+                
+                <!--Añadiendo las nuevas páginas del nuevo controlador -->
+                <prop key="productos.htm">otherPagesController</prop>
+                <prop key="contacto.htm">otherPagesController</prop>
+            </props>
+        </property>
+    </bean>
+
+
+     <!-- ***
+        este bean le informa al framework la configuración del sistema de rutas
+        que vamos a manejar
+    -->
+    
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:prefix="/WEB-INF/jsp/"
+          p:suffix=".jsp" />
+
+    <!--
+    The index controller.
+    -->
+    
+     <!-- ***
+        aqui se deben incluir los controladores y crear otras etiquetas bean
+        para cada controlador.
+    -->
+    <!-- class es la ruta donde se encuentra el controlador-->
+    
+    <bean name="homeController" class="controller.HomeController" />
+    <bean name="otherPagesController" class="controller.OtherPagesController" />
+    <bean name="indexController"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="index" />
+
+</beans>
